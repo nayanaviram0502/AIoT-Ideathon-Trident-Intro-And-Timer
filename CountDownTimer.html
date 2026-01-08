@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIoT Hackathon Timer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: url("aiotposter_01.png"); 
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            overflow: hidden;
+            gap: 200px;
+        }
+
+        .carousel-container {
+            width: 300px;
+            height: 400px;
+            position: relative;
+            perspective: 1000px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+			margin-top: 400px;
+        }
+
+        .carousel-container.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .carousel {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel img {
+            position: absolute;
+            width: 200px;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 15px;
+            transition: all 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .carousel img.center {
+            transform: scale(1.2) translateX(0);
+            z-index: 3;
+            opacity: 1;
+            filter: blur(0);
+        }
+
+        .carousel img.left {
+            transform: scale(0.8) translateX(-120px);
+            z-index: 1;
+            opacity: 0.5;
+            filter: blur(2px);
+        }
+
+        .carousel img.right {
+            transform: scale(0.8) translateX(120px);
+            z-index: 1;
+            opacity: 0.5;
+            filter: blur(2px);
+        }
+
+        .carousel img.hidden {
+            transform: scale(0.6) translateX(0);
+            z-index: 0;
+            opacity: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-top: 400px;
+            margin-bottom: 0px;
+        }
+
+        .start-button {
+            background-color: #ff8025;
+            color: #fff;
+            font-size: 26px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 128, 37, 0.4);
+        }
+
+        .start-button:hover {
+            background-color: #ff9a4d;
+            transform: scale(1.05);
+        }
+
+        .start-button:active {
+            transform: scale(0.95);
+        }
+
+        .start-button.hidden {
+            display: none;
+        }
+
+        .timer {
+            background-color: rgba(43, 42, 40, 0.95);
+            padding: 30px 40px;
+            border-radius: 20px;
+            font-size: 24px;
+            text-align: center;
+            display: none;
+            justify-content: space-between;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            transform: scale(1);
+        }
+
+        .timer.active {
+            display: flex;
+        }
+
+        .timer .box {
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+            margin: 0 15px; 
+        }
+
+        .timer .box span {
+            display: block; 
+            padding: 20px 25px;
+            border: 3px solid #ff8025;
+            border-radius: 12px;
+            margin-bottom: 10px; 
+            font-size: 48px;
+            font-weight: 700;
+            background-color: #2b2a28;
+            color: #fff;
+            min-width: 100px;
+            box-shadow: 0 5px 20px rgba(255, 128, 37, 0.3);
+        }
+
+        .timer .box .label {
+            text-align: center;
+            font-size: 16px;
+            background-color: transparent;
+            padding: 5px 12px;
+            border-radius: 8px;
+            color: #ff8025;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ended {
+            font-size: 36px;
+            color: #fff; 
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            padding: 30px 50px;
+            background-color: rgba(43, 42, 40, 0.95);
+            border: 3px solid #ff8025;
+            border-radius: 20px;
+            text-align: center;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .ended.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Left Carousel -->
+    <div class="carousel-container" id="leftCarouselContainer">
+        <div class="carousel" id="leftCarousel">
+            <img src="image1.jpg" class="center" alt="Image 1">
+            <img src="image2.jpg" class="right" alt="Image 2">
+            <img src="image3.jpg" class="hidden" alt="Image 3">
+            <img src="image4.jpg" class="hidden" alt="Image 4">
+            <img src="image5.jpg" class="hidden" alt="Image 5">
+            <img src="image6.jpg" class="hidden" alt="Image 6">
+            <img src="image7.jpg" class="hidden" alt="Image 7">
+            <img src="image8.jpg" class="hidden" alt="Image 8">
+            <img src="image9.jpg" class="hidden" alt="Image 9">
+            <img src="image10.jpg" class="left" alt="Image 10">
+        </div>
+    </div>
+
+    <!-- Timer Container -->
+    <div class="container">
+        <button class="start-button" id="startButton">Start Hackathon Timer</button>
+        
+        <div class="timer" id="timer">
+            <div class="box">
+                <span id="hours">08</span>
+                <span class="label">Hours</span>
+            </div>
+            <div class="box">
+                <span id="minutes">30</span>
+                <span class="label">Minutes</span>
+            </div>
+            <div class="box">
+                <span id="seconds">00</span>
+                <span class="label">Seconds</span>
+            </div>
+        </div>
+
+        <div class="ended" id="endedMessage">The Hackathon has come to an end!</div>
+    </div>
+
+    <!-- Right Carousel -->
+    <div class="carousel-container" id="rightCarouselContainer">
+        <div class="carousel" id="rightCarousel">
+            <img src="photo1.jpeg" class="center" alt="Photo 1">
+            <img src="photo2.jpeg" class="right" alt="Photo 2">
+            <img src="photo3.jpeg" class="hidden" alt="Photo 3">
+            <img src="photo4.jpeg" class="hidden" alt="Photo 4">
+            <img src="photo5.jpeg" class="hidden" alt="Photo 5">
+            <img src="photo6.jpeg" class="hidden" alt="Photo 6">
+            <img src="photo7.jpeg" class="hidden" alt="Photo 7">
+            <img src="photo8.jpeg" class="hidden" alt="Photo 8">
+            <img src="photo9.jpeg" class="hidden" alt="Photo 9">
+            <img src="photo10.jpeg" class="hidden" alt="Photo 10">
+            <img src="photo11.jpeg" class="hidden" alt="Photo 11">
+            <img src="photo12.jpeg" class="hidden" alt="Photo 12">
+            <img src="photo13.jpeg" class="hidden" alt="Photo 13">
+            <img src="photo14.jpeg" class="left" alt="Photo 14">
+        </div>
+    </div>
+
+    <script>
+        // Timer functionality
+        let totalSeconds = 8.5 * 60 * 60;
+        let timerInterval = null;
+        let isRunning = false;
+
+        const startButton = document.getElementById('startButton');
+        const timer = document.getElementById('timer');
+        const endedMessage = document.getElementById('endedMessage');
+
+        function updateTimer() {
+            if (totalSeconds <= 0) {
+                clearInterval(timerInterval);
+                timer.classList.remove('active');
+                endedMessage.classList.add('show');
+                return;
+            }
+
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+
+            totalSeconds--;
+        }
+
+        startButton.addEventListener('click', () => {
+            if (!isRunning) {
+                startButton.classList.add('hidden');
+                timer.classList.add('active');
+                
+                // Show carousels
+                document.getElementById('leftCarouselContainer').classList.add('active');
+                document.getElementById('rightCarouselContainer').classList.add('active');
+                
+                isRunning = true;
+                updateTimer();
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+        });
+
+        // Carousel functionality
+        function initCarousel(carouselId) {
+            const carousel = document.getElementById(carouselId);
+            const images = carousel.querySelectorAll('img');
+            let currentIndex = 0;
+
+            function rotateCarousel() {
+                images.forEach((img, index) => {
+                    img.classList.remove('center', 'left', 'right', 'hidden');
+                    
+                    const position = (index - currentIndex + images.length) % images.length;
+                    
+                    if (position === 0) {
+                        img.classList.add('center');
+                    } else if (position === 1) {
+                        img.classList.add('right');
+                    } else if (position === images.length - 1) {
+                        img.classList.add('left');
+                    } else {
+                        img.classList.add('hidden');
+                    }
+                });
+
+                currentIndex = (currentIndex + 1) % images.length;
+            }
+
+            setInterval(rotateCarousel, 4000);
+        }
+
+        initCarousel('leftCarousel');
+        initCarousel('rightCarousel');
+    </script>
+</body>
+</html>

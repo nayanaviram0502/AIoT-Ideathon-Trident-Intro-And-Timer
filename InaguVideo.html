@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Down Video Transition</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: black;
+        }
+
+        .fullscreen-image {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Fullscreen video styles */
+        .fullscreen-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 9999;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <!-- IMPORTANT: Replace 'your-image.jpg' with your actual image filename -->
+    <img src="inagurationopeningframe.png" alt="Opening Image" class="fullscreen-image" id="openingImage">
+
+    <script>
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'PageDown') {
+                e.preventDefault();
+                playFullscreenVideo();
+            }
+        });
+
+        function playFullscreenVideo() {
+            // Hide/remove the opening image
+            const openingImage = document.getElementById('openingImage');
+            openingImage.style.display = 'none';
+            
+            // Create video element
+            const video = document.createElement('video');
+            
+            // IMPORTANT: Replace 'your-video.mp4' with your actual video filename
+            video.src = 'inagurationAIoT.mp4';
+            
+            // Apply fullscreen styles
+            video.className = 'fullscreen-video';
+            video.autoplay = true;
+            video.controls = false; // Set to true if you want video controls
+            
+            // Add video to page
+            document.body.appendChild(video);
+            
+            // When video ends, redirect to next page
+            video.addEventListener('ended', function() {
+                // IMPORTANT: Replace 'next-page.html' with your actual next page filename
+                window.location.href = 'CountDownTimer.html';
+            });
+            
+            // Optional: Handle video loading errors
+            video.addEventListener('error', function() {
+                document.body.removeChild(video);
+                openingImage.style.display = 'block'; // Show image again on error
+                alert('Error loading video. Please check that the video file exists.');
+            });
+            
+            // Optional: Allow ESC key to exit video early
+            document.addEventListener('keydown', function escapeHandler(e) {
+                if (e.key === 'Escape') {
+                    document.body.removeChild(video);
+                    openingImage.style.display = 'block'; // Show image again
+                    document.removeEventListener('keydown', escapeHandler);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
